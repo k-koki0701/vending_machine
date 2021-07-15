@@ -5,35 +5,58 @@ class MoneyManagement
 
   MONEY = [10, 50, 100, 500, 1000].freeze
   def initialize
-    # 最初の自動販売機に入っている金額は0円
+    # 自動販売機に入っている金額
     @slot_money = 0
-    #最初の売り上げ金額は0円
+    #　売り上げ金額
     @sales_total_amount = 0
   end
 
+  # 自動販売機に入っているお金を表示する
   def current_slot_money
-    # 自動販売機に入っているお金を表示する
     @slot_money
   end
 
+  # 自動販売機にお金を入れる
   def money_entry
-    puts "1.お金を入れる"
-    puts "お金を入れてください(10,50,100,500,1000)"
-    money = gets
-    if MONEY.include?(money.to_i)?
-      "チャリン".tap { @slot_money += money.to_i } :"#{money}円"
+    money = gets.tr('０-９','0-9').to_i
+    if MONEY.include?(money)
+      @slot_money += money
+      payment_sound(money)
     else
-      puts "はいんない"
+      puts "釣り銭#{money}円"
+    end
+    VendingMachine.sleep_time(1)
+  end
+
+  # お釣りを返して、自動販売機に入れたお金を０にする
+  def return_money
+    puts "釣り銭#{@slot_money}円"
+    @slot_money = 0
+  end
+
+  # 現在の売り上げ総額を出力する
+  def current_sales
+    puts "売り上げ総額:#{@sales_total_amount}円"
+    VendingMachine.sleep_time(2)
+  end
+
+  # お札を入れるとウィーン、小銭を入れるとチャリンと出力する
+  def  payment_sound(money)
+    if money == 1000
+      puts "ウィーン"
+    else
+      puts "チャリン"
     end
   end
 
-  def return_money
-    puts "釣り銭#{@slot_money}円".tap {@slot_money = 0}
-    sleep 2
-  end
-
-  def current_sales
-    puts "売り上げ総額:#{@sales_total_amount}円"
-  end
-
 end
+
+#　なぜtapメソッドが効かないのか？
+  # def money_entry
+  #   money = gets.to_i
+  #   if MONEY.include?(money)
+  #     "チャリン".tap { @slot_money += money }
+  #   else
+  #     p "入りません"
+  #   end
+  # end
