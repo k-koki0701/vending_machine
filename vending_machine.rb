@@ -64,6 +64,7 @@ class VendingMachine
     VendingMachine.sleep_time(1)
   end
 
+  # 当たりかハズレかを判定する
   def  hit_or_miss(drink_name)
     roulette = ['ハズレ','ハズレ','ハズレ','ハズレ','当たり'].shuffle
     if roulette[0] == '当たり' && @inventory_control.drink[:"#{drink_name}"][:stock] > 0
@@ -76,6 +77,7 @@ class VendingMachine
     VendingMachine.sleep_time(1)
   end
 
+  # 在庫数と投入金額で購入可能なドリンクを出力する
   def buyable?
     drink_buyable = []
     @inventory_control.drink.each do |item|
@@ -95,6 +97,7 @@ class VendingMachine
     end
   end
 
+  # 管理者のパスワード入力
   def admin_machine
     puts "合言葉は？"
     keyword = gets.chomp
@@ -106,6 +109,7 @@ class VendingMachine
   end
 
 
+  # 管理者用
   def admin
     puts "＜メニュー＞"
     puts "1.在庫確認，2.商品追加，3.新規商品登録, 4.売上金確認"
@@ -132,6 +136,7 @@ class VendingMachine
     end
   end
 
+  # 引数で受け取った数がsleepの秒数になる
   def self.sleep_time(seconds)
     sleep "#{seconds}".to_i
   end

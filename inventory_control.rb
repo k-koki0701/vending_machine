@@ -9,14 +9,14 @@ class InventoryControl
 
   # 現在、自動販売機にある、商品名、値段、在庫本数を出力する
   def stock_information
-    @drink_information = []
+    drink_information = []
     @drink.each do |key, value|
        drink_name = key
       value.each_value do |value|
-        @drink_information.push(value)
+        drink_information.push(value)
       end
-      puts "商品名:#{drink_name}, 値段:#{@drink_information[0]}円, 在庫本数:#{@drink_information[1]}本"
-      @drink_information.clear
+      puts "商品名:#{drink_name}, 値段:#{drink_information[0]}円, 在庫本数:#{drink_information[1]}本"
+      drink_information.clear
       VendingMachine.sleep_time(1)
     end
   end
