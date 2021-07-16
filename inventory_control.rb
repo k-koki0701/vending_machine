@@ -1,6 +1,9 @@
 require './vending_machine'
+require './sleep'
 
 class InventoryControl
+  include Sleep
+
   attr_accessor :drink
 
   def initialize
@@ -17,7 +20,7 @@ class InventoryControl
       end
       puts "商品名:#{drink_name}, 値段:#{drink_information[0]}円, 在庫本数:#{drink_information[1]}本"
       drink_information.clear
-      VendingMachine.sleep_time(1)
+      sleep_time(1)
     end
   end
 
@@ -25,20 +28,20 @@ class InventoryControl
   def existing_stock_addition
     puts "2.商品名を入力してください"
     drink = gets.chomp
-    if @drink.has_key?(:"#{drink}") == true
-       @drink[:"#{drink}"][:stock]+= 1
+    if drink_exists?(drink) == true
+      @drink[:"#{drink}"][:stock]+= 1
       puts "ガチャン"
     else
       puts "登録にない商品です"
     end
-    VendingMachine.sleep_time(1)
+    sleep_time(1)
   end
 
   # 自動販売機に登録されていない商品を登録する
   def new_stock_addition
-    puts "商品名を入力してください"
+    puts "3.商品名を入力してください"
     drink = gets.chomp
-    if @drink.has_key?(:"#{drink}") == true
+    if drink_exists?(drink) == true
       puts "すでに登録してある商品です"
     else
       puts "値段を入力してください"
@@ -49,7 +52,27 @@ class InventoryControl
       @drink[:"#{drink}"] = {price:price,stock:stock}
       puts "#{drink},#{price}円,#{stock}本を追加しました"
     end
-    VendingMachine.sleep_time(2)
+    sleep_time(2)
+  end
+
+  # 登録しているドリンクの値段を変更できる
+  def price_change
+    puts "4.商品名を入力してください"
+    drink = gets.chomp
+    if drink_exists?(drink) == true
+      puts "#{drink}の変更後の値段を入力してください"
+      price = gets.tr('０-９','0-9').to_i
+      @drink[:"#{drink}"][:price] = "#{price}".to_i
+      puts "#{drink}の値段を#{price}円に変更しました"
+    else
+      puts "登録にない商品です"
+    end
+    sleep_time(1)
+  end
+
+  # 自販機にドリンクが登録されているかどうか
+  def drink_exists?(drink)
+    @drink.has_key?(:"#{drink}")
   end
 
 end

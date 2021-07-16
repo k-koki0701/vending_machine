@@ -1,6 +1,9 @@
 require './vending_machine'
+require './sleep'
 
 class MoneyManagement
+  include Sleep
+
   attr_accessor :slot_money, :sales_total_amount
 
   MONEY = [10, 50, 100, 500, 1000].freeze
@@ -23,21 +26,21 @@ class MoneyManagement
       @slot_money += money
       payment_sound(money)
     else
-      puts "釣り銭#{money}円"
+      puts "釣り銭: ¥#{money}"
     end
-    VendingMachine.sleep_time(1)
+    sleep_time(1)
   end
 
   # お釣りを返して、自動販売機に入れたお金を０にする
   def return_money
-    puts "釣り銭#{@slot_money}円"
+    puts "釣り銭: ¥#{@slot_money}"
     @slot_money = 0
   end
 
   # 現在の売り上げ総額を出力する
   def current_sales
-    puts "売り上げ総額:#{@sales_total_amount}円"
-    VendingMachine.sleep_time(2)
+    puts "売り上げ総額: ¥#{@sales_total_amount}"
+    sleep_time(2)
   end
 
   # お札を入れるとウィーン、小銭を入れるとチャリンと出力する

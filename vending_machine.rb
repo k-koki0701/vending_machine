@@ -5,9 +5,10 @@
 
 require './inventory_control'
 require './money_management'
-
+require './sleep'
 
 class VendingMachine
+  include Sleep
 
   def initialize
     @money_management = MoneyManagement.new
@@ -17,9 +18,8 @@ class VendingMachine
   # 一般のお客様用
   def main
     puts "＜メニュー＞"
-    puts "1.お金を入れる，2.商品を買う，3.お金払い戻し"
-    puts "0.自販機から離れる"
-    puts "【投入金額：#{@money_management.current_slot_money}円】"
+    puts "1.お金を入れる，2.商品を買う，3.お金払い戻し，9.自販機から離れる"
+    puts "【¥#{@money_management.current_slot_money}】"
     number = gets.tr('０-９','0-9').to_i
     case number
     when 1 then
@@ -29,12 +29,12 @@ class VendingMachine
       main
     when 2 then
       puts "2.商品を買う"
-      puts "【投入金額：#{@money_management.current_slot_money}円】"
+      puts "【¥#{@money_management.current_slot_money}】"
       purchase if buyable? == true
       main
     when 3 then
       @money_management.return_money
-    when 0 then
+    when 9 then
       puts "またのご利用お待ちしております"
     else
       puts "そんな番号ない"
@@ -45,7 +45,7 @@ class VendingMachine
   # 購入
   def purchase
     puts "当たりでもう一本プレゼント！"
-    VendingMachine.sleep_time(1)
+    sleep_time(1)
     puts "購入したいドリンク名を入力してください"
     drink_name = gets.chomp
     if @inventory_control.drink.has_key?(:"#{drink_name}") == false
@@ -58,10 +58,10 @@ class VendingMachine
       @money_management.sales_total_amount += @inventory_control.drink[:"#{drink_name}"][:price]
       puts 'ガタンッ'
       puts '抽選中...'
-      VendingMachine.sleep_time(2)
+      sleep_time(2)
       hit_or_miss(drink_name)
     end
-    VendingMachine.sleep_time(1)
+    sleep_time(1)
   end
 
   # 当たりかハズレかを判定する
@@ -74,7 +74,7 @@ class VendingMachine
     else
       puts "ハズレ"
     end
-    VendingMachine.sleep_time(1)
+    sleep_time(1)
   end
 
   # 在庫数と投入金額で購入可能なドリンクを出力する
@@ -88,11 +88,11 @@ class VendingMachine
     end
     unless drink_buyable.empty?
       puts "#{drink_buyable.join(',')}が購入可能です"
-      VendingMachine.sleep_time(1)
+      sleep_time(1)
       return true
     else
       puts "購入可能なドリンクはありません"
-      VendingMachine.sleep_time(1)
+      sleep_time(1)
       return false
     end
   end
@@ -111,9 +111,8 @@ class VendingMachine
 
   # 管理者用
   def admin
-    puts "＜メニュー＞"
-    puts "1.在庫確認，2.商品追加，3.新規商品登録, 4.売上金確認"
-    puts "0.自販機から離れる"
+    puts "＜管理者メニュー＞"
+    puts "1.在庫確認，2.商品追加，3.新規商品登録，4.値段変更，5.売上金確認，9.自販機から離れる"
     number = gets.tr('０-９','0-9').to_i
     case number
     when 1 then
@@ -126,20 +125,17 @@ class VendingMachine
       @inventory_control.new_stock_addition
       admin
     when 4 then
+      @inventory_control.price_change
+      admin
+    when 5 then
       @money_management.current_sales
       admin
-    when 0 then
+    when 9 then
       puts "お疲れ様でした"
     else
       puts "そんな番号ない"
       admin
     end
   end
-
-  # 引数で受け取った数がsleepの秒数になる
-  def self.sleep_time(seconds)
-    sleep "#{seconds}".to_i
-  end
-
 
 end
