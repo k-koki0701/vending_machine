@@ -42,7 +42,7 @@ class VendingMachine
     end
   end
 
-  # 購入
+  # 購入動作
   def purchase
     puts "当たりでもう一本プレゼント！"
     sleep_time(1)
