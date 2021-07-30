@@ -52,13 +52,17 @@ class MoneyManagement
     end
   end
 
+  def byable?(price)
+    @slot_money < price
+  end
+
 end
 
 #　なぜtapメソッドが効かないのか？
   # def money_entry
   #   money = gets.to_i
   #   if MONEY.include?(money)
-  #     "チャリン".tap { @slot_money += money }
+  #     p "チャリン".tap { @slot_money += money }
   #   else
   #     p "入りません"
   #   end

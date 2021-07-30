@@ -25,7 +25,7 @@ class VendingMachine
     when 1 then
       puts "1.お金を入れる"
       puts "お金を入れてください(10,50,100,500,1000)"
-      @money_management.money_entry
+      puts @money_management.money_entry
       main
     when 2 then
       puts "2.商品を買う"
@@ -48,9 +48,11 @@ class VendingMachine
     sleep_time(1)
     puts "購入したいドリンク名を入力してください"
     drink_name = gets.chomp
-    if @inventory_control.drink.has_key?(:"#{drink_name}") == false
+    if @inventory_control.drink_exists?(drink_name) == false
       puts "#{drink_name}はありません"
-    elsif @money_management.slot_money < @inventory_control.drink[:"#{drink_name}"][:price] || @inventory_control.drink[:"#{drink_name}"][:stock] == 0
+    elsif  @inventory_control.has_stock?(drink_name)
+      puts "在庫がありません"
+    elsif @money_management.byable?(@inventory_control.fetch_drink(name).price)
       puts "購入できません"
     else
       @inventory_control.drink[:"#{drink_name}"][:stock] -= 1

@@ -7,19 +7,16 @@ class InventoryControl
   attr_accessor :drink
 
   def initialize
-    @drink = {コーラ:{price:120, stock:5}, レッドブル:{price:200, stock:5}, 水:{price:100, stock:5}}
+    @drinks = []
+    @drinks << Drink.new(name: 'コーラ', price: 120, stock: 5)
+    @drinks << Drink.new(name: 'コーラ', price: 120)
+    @drinks << Drink.new(name: 'コーラ', price: 120)
   end
 
   # 現在、自動販売機にある、商品名、値段、在庫本数を出力する
   def stock_information
-    drink_information = []
-    @drink.each do |key, value|
-       drink_name = key
-      value.each_value do |value|
-        drink_information.push(value)
-      end
-      puts "商品名:#{drink_name}, 値段:#{drink_information[0]}円, 在庫本数:#{drink_information[1]}本"
-      drink_information.clear
+    @drinks.each do |drink|
+      puts "商品名:#{drink.name}, 値段:#{drink.price}円, 在庫本数:#{drink.stock}本"
       sleep_time(1)
     end
   end
@@ -27,9 +24,10 @@ class InventoryControl
   # 既存のドリンクを１本増やす
   def existing_stock_addition
     puts "2.商品名を入力してください"
-    drink = gets.chomp
-    if drink_exists?(drink) == true
-      @drink[:"#{drink}"][:stock]+= 1
+    name = gets.chomp
+    drink = fetch_drink(name)
+    if drink
+      drink.add_stock
       puts "ガチャン"
     else
       puts "登録にない商品です"
@@ -70,9 +68,16 @@ class InventoryControl
     sleep_time(1)
   end
 
-  # 自販機にドリンクが登録されているかどうか
-  def drink_exists?(drink)
-    @drink.has_key?(:"#{drink}")
+  def fetch_drink(name)
+    @drinks.find {  |drink| drink.name == name }
   end
 
+  # 自販機にドリンクが登録されているかどうか
+  def drink_exists?(name)
+    @drinks.any? { |drink| drink.name == name }
+  end
+
+  def has_stock?
+    fetch_drink(name).stock > 0
+  end
 end
